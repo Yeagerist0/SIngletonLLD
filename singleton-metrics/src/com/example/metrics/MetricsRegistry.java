@@ -7,12 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Global metrics registry — a proper, thread-safe, lazy-initialized Singleton.
- *
- * Fixes applied:
- *  1) Lazy initialization via static inner holder class (Bill Pugh idiom).
- *  2) Private constructor with reflection guard.
- *  3) readResolve() to preserve singleton on deserialization.
+ * Global metrics registry (Singleton).
  */
 public class MetricsRegistry implements Serializable {
 
@@ -21,10 +16,8 @@ public class MetricsRegistry implements Serializable {
 
     private final Map<String, Long> counters = new HashMap<>();
 
-    // Static flag to detect reflection attacks
     private static volatile boolean instanceCreated = false;
 
-    // Private constructor — blocks reflection-based second construction
     private MetricsRegistry() {
         if (instanceCreated) {
             throw new RuntimeException(
@@ -33,7 +26,6 @@ public class MetricsRegistry implements Serializable {
         instanceCreated = true;
     }
 
-    // Bill Pugh Singleton — lazy, thread-safe via class-loading guarantee
     private static class Holder {
         private static final MetricsRegistry INSTANCE = new MetricsRegistry();
     }
@@ -42,7 +34,6 @@ public class MetricsRegistry implements Serializable {
         return Holder.INSTANCE;
     }
 
-    // Preserve singleton across serialization/deserialization
     @Serial
     private Object readResolve() {
         return getInstance();

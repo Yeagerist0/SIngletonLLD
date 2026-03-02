@@ -6,8 +6,6 @@ import java.util.Properties;
 
 /**
  * Loads default metric keys from a properties file.
- *
- * FIX: Uses MetricsRegistry.getInstance() instead of new MetricsRegistry().
  */
 public class MetricsLoader {
 
@@ -17,7 +15,7 @@ public class MetricsLoader {
             props.load(fis);
         }
 
-        // FIXED: use the singleton instance instead of creating a new one
+        // use the singleton instance
         MetricsRegistry registry = MetricsRegistry.getInstance();
 
         for (String key : props.stringPropertyNames()) {
